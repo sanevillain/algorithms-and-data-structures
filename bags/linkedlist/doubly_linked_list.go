@@ -1,13 +1,15 @@
 package linkedlist
 
 import (
+	"fmt"
+
 	"golang.org/x/exp/constraints"
 )
 
 // DoublyLinkedList is a doubly linked list
 type DoublyLinkedList[T constraints.Ordered] struct {
-	first *DoubleNode[T]
-	last  *DoubleNode[T]
+	first *DoubleNode[T] // head of list
+	last  *DoubleNode[T] // tail of list
 	size  int
 }
 
@@ -34,6 +36,19 @@ func (l *DoublyLinkedList[T]) Size() int {
 // IsEmpty returns true if the list is empty.
 func (l *DoublyLinkedList[T]) IsEmpty() bool {
 	return l.size == 0
+}
+
+func (l *DoublyLinkedList[T]) String() string {
+	str := "{"
+
+	for node := l.first; node != nil; node = node.Next() {
+		str += fmt.Sprintf("{ item: %v, next: %v, prev: %v }", node.item, node.next, node.prev)
+		if node.next != nil {
+			str += ", "
+		}
+	}
+
+	return str + "}"
 }
 
 // Stack add a new node to the beginning of the list
