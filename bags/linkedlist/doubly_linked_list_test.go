@@ -64,17 +64,13 @@ func TestDoublyLinkedList_AddBefore(t *testing.T) {
 		list.Queue(1)
 
 		list.AddBefore(1, 2)
-		if item := list.First().Item(); item != 2 {
-			t.Errorf("expected first item to be 2, got %d", item)
+		if first, last := list.First().Item(), list.Last().Item(); first != 2 || last != 1 {
+			t.Errorf("expected first item to be 2 and last item to be 1, got %d and %d", first, last)
 		}
 
 		list.AddBefore(2, 3)
-		if item := list.First().Item(); item != 3 {
-			t.Errorf("expected first item to be 3, got %d", item)
-		}
-
-		if item := list.Last().Item(); item != 1 {
-			t.Errorf("expected last item to be 1, got %d", item)
+		if first, last := list.First().Item(), list.Last().Item(); first != 3 || last != 1 {
+			t.Errorf("expected first item to be 3 and last item to be 1, got %d and %d", first, last)
 		}
 	})
 }
