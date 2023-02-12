@@ -77,6 +77,6 @@ func (n *DoubleNode[T]) Remove() T {
 }
 
 // NewDoubleNode creates a new node.
-func NewDoubleNode[T constraints.Ordered](item T, next, prev *DoubleNode[T]) *DoubleNode[T] {
-	return &DoubleNode[T]{item, next, prev}
+func NewDoubleNode[T constraints.Ordered](item T) *DoubleNode[T] {
+	return &DoubleNode[T]{item, nil, nil}
 }

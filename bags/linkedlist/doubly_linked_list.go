@@ -54,7 +54,9 @@ func (l *DoublyLinkedList[T]) String() string {
 // Stack add a new node to the beginning of the list
 func (l *DoublyLinkedList[T]) Stack(item T) {
 	oldFirst := l.First()
-	l.first = NewDoubleNode(item, oldFirst, nil)
+
+	l.first = NewDoubleNode(item)
+	l.first.SetNext(oldFirst)
 
 	if oldFirst != nil {
 		oldFirst.SetPrev(l.first)
@@ -70,13 +72,14 @@ func (l *DoublyLinkedList[T]) Stack(item T) {
 // Queue adds a new node to the end of the list
 func (l *DoublyLinkedList[T]) Queue(item T) {
 	if l.IsEmpty() {
-		l.first = NewDoubleNode(item, nil, nil)
+		l.first = NewDoubleNode(item)
 		l.size++
 		return
 	}
 
 	oldLast := l.Last()
-	l.last = NewDoubleNode(item, nil, oldLast)
+	l.last = NewDoubleNode(item)
+	l.last.SetPrev(oldLast)
 
 	if oldLast != nil {
 		oldLast.SetNext(l.last)
@@ -94,12 +97,15 @@ func (l *DoublyLinkedList[T]) AddBefore(match, item T) {
 			continue
 		}
 
-		newNode := NewDoubleNode(item, node, node.prev)
-		node.SetPrev(newNode)
+		newNode := NewDoubleNode(item)
+		newNode.SetPrev(node.prev)
+		newNode.SetNext(node)
 
 		if node.prev != nil {
-			node.prev.SetNext(newNode)
+			node.prev.next = newNode
 		}
+
+		node.SetPrev(newNode)
 
 		if l.first == node {
 			l.first = newNode
@@ -121,8 +127,8 @@ func (l *DoublyLinkedList[T]) AddAfter(match, item T) {
 			continue
 		}
 
-		newNode := NewDoubleNode(item, node.next, node)
-		node.SetNext(newNode)
+		newNode := NewDoubleNode(item)
+		newNode.SetPrev(node)
 
 		if node.next != nil {
 			node.next.SetPrev(newNode)
