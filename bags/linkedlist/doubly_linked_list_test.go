@@ -85,17 +85,17 @@ func TestDoublyLinkedList_AddAfter(t *testing.T) {
 		list.Queue(1)
 
 		list.AddAfter(1, 2)
-		if first, last := list.First().Item(), list.Last().Item(); first != 1 && last != 2 {
+		if first, last := list.First().Item(), list.Last().Item(); first != 1 || last != 2 {
 			t.Errorf("expected first item to be 1 and last item to be 2, got %d and %d", first, last)
 		}
 
 		list.AddAfter(2, 3)
-		if first, last := list.First().Item(), list.Last().Item(); first != 1 && last != 3 {
+		if first, last := list.First().Item(), list.Last().Item(); first != 1 || last != 3 {
 			t.Errorf("expected first item to be 1 and last item to be 3, got %d and %d", first, last)
 		}
 
 		list.AddAfter(3, 4)
-		if first, last := list.First().Item(), list.Last().Item(); first != 1 && last != 4 {
+		if first, last := list.First().Item(), list.Last().Item(); first != 1 || last != 4 {
 			t.Errorf("expected first item to be 1 and last item to be 4, got %d and %d", first, last)
 		}
 	})

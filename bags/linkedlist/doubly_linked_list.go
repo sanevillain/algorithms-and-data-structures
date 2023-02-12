@@ -134,6 +134,16 @@ func (l *DoublyLinkedList[T]) AddAfter(match, item T) {
 			node.next.SetPrev(newNode)
 		}
 
+		node.SetNext(newNode)
+
+		if l.last == nil {
+			if l.first == nil {
+				l.first = node
+			}
+
+			l.last = newNode
+		}
+
 		if l.last == node {
 			l.last = newNode
 		}
