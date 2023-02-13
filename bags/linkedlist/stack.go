@@ -130,10 +130,9 @@ func (s *Stack[T]) Max() T {
 // Reverse returns a reversed copy of the stack
 func (s *Stack[T]) Reverse() *Stack[T] {
 	stack := NewStack[T]()
-	stackCopy := s.Copy()
 
-	for !stackCopy.IsEmpty() {
-		stack.Push(stackCopy.Pop())
+	for node := s.first; node != nil; node = node.next {
+		stack.Push(node.item)
 	}
 
 	return stack

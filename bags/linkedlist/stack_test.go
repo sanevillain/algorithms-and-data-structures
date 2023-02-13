@@ -78,14 +78,8 @@ func TestStack_Copy(t *testing.T) {
 		s2 := s.Copy()
 
 		for i := len(vals) - 1; i >= 0; i-- {
-			if pop := s2.Pop(); pop != vals[i] {
-				t.Errorf("s2.Pop() = %v, want %v", pop, vals[i])
-			}
-		}
-
-		for i := len(vals) - 1; i >= 0; i-- {
-			if pop := s.Pop(); pop != vals[i] {
-				t.Errorf("s.Pop() = %v, want %v", pop, vals[i])
+			if pop, popCopy := s.Pop(), s2.Pop(); pop != vals[i] || popCopy != vals[i] {
+				t.Errorf("s.Pop() = %v, s2.Pop() = %v, want %v", pop, popCopy, vals[i])
 			}
 		}
 	})
