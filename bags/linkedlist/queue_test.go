@@ -63,3 +63,21 @@ func TestQueue_Dequeue(t *testing.T) {
 		}
 	})
 }
+
+func TestQueue_Copy(t *testing.T) {
+	t.Run("it should copy the queue", func(t *testing.T) {
+		d := NewQueue[int]()
+
+		vals := []int{1, 2, 3, 4, 5}
+		for _, v := range vals {
+			d.Enqueue(v)
+		}
+
+		c := d.Copy()
+		for !c.IsEmpty() {
+			if deq, cDeq := d.Dequeue(), c.Dequeue(); deq != cDeq {
+				t.Errorf("d.Dequeue() = %v, want %v", deq, cDeq)
+			}
+		}
+	})
+}

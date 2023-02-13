@@ -45,6 +45,16 @@ func (q *Queue[T]) Dequeue() T {
 	return item
 }
 
+func (q *Queue[T]) Copy() *Queue[T] {
+	queue := NewQueue[T]()
+
+	for node := q.first; node != nil; node = node.next {
+		queue.Enqueue(node.item)
+	}
+
+	return queue
+}
+
 // First returns the least recently added node.
 func (q *Queue[T]) First() *Node[T] {
 	return q.first
