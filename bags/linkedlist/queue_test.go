@@ -23,10 +23,18 @@ func TestQueue_Enqueue(t *testing.T) {
 		size := 10
 		for i := 0; i < size; i++ {
 			d.Enqueue(i)
+
+			if d.Size() != i+1 {
+				t.Errorf("s.Size() = %v, want %v", d.Size(), i+1)
+			}
 		}
 
-		if d.Size() != size {
-			t.Errorf("s.Size() = %v, want %v", d.Size(), size)
+		if d.First().item != 0 {
+			t.Errorf("d.First().item = %v, want %v", d.First().item, 0)
+		}
+
+		if d.Last().item != 9 {
+			t.Errorf("d.Last().item = %v, want %v", d.Last().item, 9)
 		}
 	})
 }
@@ -38,11 +46,15 @@ func TestQueue_Dequeue(t *testing.T) {
 		vals := []int{1, 2, 3, 4, 5}
 		for _, v := range vals {
 			d.Enqueue(v)
+
+			if d.Size() != v {
+				t.Errorf("s.Size() = %v, want %v", d.Size(), v)
+			}
 		}
 
 		for _, v := range vals {
-			if d.Dequeue() != v {
-				t.Errorf("d.Dequeue() = %v, want %v", d.Dequeue(), v)
+			if deq := d.Dequeue(); deq != v {
+				t.Errorf("d.Dequeue() = %v, want %v", deq, v)
 			}
 		}
 

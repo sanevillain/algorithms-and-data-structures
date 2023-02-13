@@ -36,18 +36,36 @@ func (q *Queue[T]) Dequeue() T {
 	item := q.first.item
 	q.first = q.first.next
 
-	if q.IsEmpty() {
+	if q.first == nil {
 		q.last = nil
+	} else {
+		q.n--
 	}
 
 	return item
 }
 
+// First returns the least recently added node.
+func (q *Queue[T]) First() *Node[T] {
+	return q.first
+}
+
+// Last returns the most recently added node.
+func (q *Queue[T]) Last() *Node[T] {
+	return q.last
+}
+
 // IsEmpty returns true if the queue is empty.
-func (q *Queue[T]) IsEmpty() bool { return q.first == nil }
+func (q *Queue[T]) IsEmpty() bool {
+	return q.first == nil
+}
 
 // Size returns the number of items in the queue.
-func (q *Queue[T]) Size() int { return q.n }
+func (q *Queue[T]) Size() int {
+	return q.n
+}
 
 // NewQueue creates a new queue.
-func NewQueue[T constraints.Ordered]() *Queue[T] { return &Queue[T]{} }
+func NewQueue[T constraints.Ordered]() *Queue[T] {
+	return &Queue[T]{}
+}
