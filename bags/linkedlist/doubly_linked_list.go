@@ -211,6 +211,17 @@ func (l *DoublyLinkedList[T]) Remove(item T) T {
 	return empty
 }
 
+// Copy copies the list
+func (l *DoublyLinkedList[T]) Copy() *DoublyLinkedList[T] {
+	lcopy := NewDoublyLinkedList[T]()
+
+	for node := l.First(); node != nil; node = node.next {
+		lcopy.Queue(node.item)
+	}
+
+	return lcopy
+}
+
 // Clear removes all nodes from the list.
 func (l *DoublyLinkedList[T]) Clear() {
 	for node := l.First(); node != nil; node = node.next {

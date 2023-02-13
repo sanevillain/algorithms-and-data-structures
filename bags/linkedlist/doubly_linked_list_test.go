@@ -207,3 +207,20 @@ func TestDoublyLinkedList_Remove(t *testing.T) {
 		}
 	})
 }
+
+func TestDoublyLinkedList_Copy(t *testing.T) {
+	t.Run("it should copy the list", func(t *testing.T) {
+		list := NewDoublyLinkedList[int]()
+		for i := 0; i < 10; i++ {
+			list.Queue(i)
+		}
+
+		listCopy := list.Copy()
+
+		for i := 0; i < 10; i++ {
+			if item, copyItem := list.Pop(), listCopy.Pop(); item != i || copyItem != i {
+				t.Errorf("expected item to be %d and copy item to be %d, got %d and %d", i, i, item, copyItem)
+			}
+		}
+	})
+}
