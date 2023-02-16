@@ -3,15 +3,23 @@ package linkedlist
 import "testing"
 
 func TestQueue_New(t *testing.T) {
-	t.Run("it should create a new queue", func(t *testing.T) {
+	t.Run("it should create a new empty queue", func(t *testing.T) {
 		d := NewQueue[int]()
 
 		if d == nil {
 			t.Errorf("NewQueue() = %v, want %v", d, 0)
 		}
 
-		if d.Size() != 0 {
-			t.Errorf("NewQueue() = %v, want %v", d.Size(), 0)
+		if empty := d.IsEmpty(); !empty {
+			t.Errorf("d.IsEmpty() = %v, want %v", empty, true)
+		}
+
+		if size := d.Size(); size != 0 {
+			t.Errorf("d.Size() = %v, want %v", size, 0)
+		}
+
+		if first, last := d.First(), d.Last(); first != nil || last != nil {
+			t.Errorf("d.First() = %v, d.Last() = %v, want %v, %v", first, last, nil, nil)
 		}
 	})
 }
@@ -20,21 +28,21 @@ func TestQueue_Enqueue(t *testing.T) {
 	t.Run("it should queue items", func(t *testing.T) {
 		d := NewQueue[int]()
 
-		size := 10
-		for i := 0; i < size; i++ {
+		start, end := 1, 10
+		for i := start; i <= end; i++ {
 			d.Enqueue(i)
 
-			if d.Size() != i+1 {
-				t.Errorf("s.Size() = %v, want %v", d.Size(), i+1)
+			if size := d.Size(); size != i {
+				t.Errorf("d.Size() = %v, want %v", size, i)
 			}
 		}
 
-		if d.First().item != 0 {
-			t.Errorf("d.First().item = %v, want %v", d.First().item, 0)
+		if empty := d.IsEmpty(); empty {
+			t.Errorf("d.IsEmpty() = %v, want %v", empty, false)
 		}
 
-		if d.Last().item != 9 {
-			t.Errorf("d.Last().item = %v, want %v", d.Last().item, 9)
+		if first, last := d.First(), d.Last(); first.item != start || last.item != end {
+			t.Errorf("d.First() = %v, d.Last() = %v, want %v, %v", first.item, last.item, start, end)
 		}
 	})
 }
@@ -43,23 +51,27 @@ func TestQueue_Dequeue(t *testing.T) {
 	t.Run("it should dequeue items in the same order of insertion", func(t *testing.T) {
 		d := NewQueue[int]()
 
-		vals := []int{1, 2, 3, 4, 5}
-		for _, v := range vals {
-			d.Enqueue(v)
+		start, end := 1, 10
+		for i := start; i <= end; i++ {
+			d.Enqueue(i)
+		}
 
-			if d.Size() != v {
-				t.Errorf("s.Size() = %v, want %v", d.Size(), v)
+		for i := start; i <= end; i++ {
+			if size := d.Size(); size != end-i+1 {
+				t.Errorf("d.Size() = %v, want %v", size, end-i+1)
+			}
+
+			if deq := d.Dequeue(); deq != i {
+				t.Errorf("d.Dequeue() = %v, want %v", deq, i)
 			}
 		}
 
-		for _, v := range vals {
-			if deq := d.Dequeue(); deq != v {
-				t.Errorf("d.Dequeue() = %v, want %v", deq, v)
-			}
+		if empty := d.IsEmpty(); !empty {
+			t.Errorf("d.IsEmpty() = %v, want %v", empty, true)
 		}
 
-		if !d.IsEmpty() {
-			t.Errorf("d.IsEmpty() = %v, want %v", d.IsEmpty(), true)
+		if first, last := d.First(), d.Last(); first != nil || last != nil {
+			t.Errorf("d.First() = %v, d.Last() = %v, want %v, %v", first, last, nil, nil)
 		}
 	})
 }
@@ -68,12 +80,17 @@ func TestQueue_Copy(t *testing.T) {
 	t.Run("it should copy the queue", func(t *testing.T) {
 		d := NewQueue[int]()
 
-		vals := []int{1, 2, 3, 4, 5}
-		for _, v := range vals {
-			d.Enqueue(v)
+		size := 10
+		for i := 1; i <= size; i++ {
+			d.Enqueue(i)
 		}
 
 		c := d.Copy()
+
+		if empty := d.IsEmpty(); empty {
+			t.Errorf("d.IsEmpty() = %v, want %v", empty, false)
+		}
+
 		for !c.IsEmpty() {
 			if deq, cDeq := d.Dequeue(), c.Dequeue(); deq != cDeq {
 				t.Errorf("d.Dequeue() = %v, want %v", deq, cDeq)
