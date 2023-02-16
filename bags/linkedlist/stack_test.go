@@ -77,74 +77,18 @@ func TestStack_Copy(t *testing.T) {
 		s, vals := newIntStack(5)
 		s2 := s.Copy()
 
+		if s.Size() != s2.Size() {
+			t.Errorf("s.Size() = %v, s2.Size() = %v, want %v", s.Size(), s2.Size(), 5)
+		}
+
 		for i := len(vals) - 1; i >= 0; i-- {
 			if pop, popCopy := s.Pop(), s2.Pop(); pop != vals[i] || popCopy != vals[i] {
 				t.Errorf("s.Pop() = %v, s2.Pop() = %v, want %v", pop, popCopy, vals[i])
 			}
 		}
-	})
-}
 
-func TestStack_Delete(t *testing.T) {
-	t.Run("it shouldnt impact stack if called with an index beyond the stack items", func(t *testing.T) {
-		s, vals := newIntStack(5)
-
-		s.Delete(-1)
-		s.Delete(10)
-
-		if s.Size() != len(vals) {
-			t.Errorf("s.Size() = %v, want %v", s.Size(), len(vals))
-		}
-	})
-
-	t.Run("it should delete the first item and set the correct head", func(t *testing.T) {
-		s, _ := newIntStack(3)
-		s.Delete(0)
-
-		if size := s.Size(); size != 2 {
-			t.Errorf("s.Size() = %v, want %v", size, 2)
-		}
-
-		if pop := s.Pop(); pop != 2 {
-			t.Errorf("s.Peek() = %v, want %v", pop, 2)
-		}
-
-		if pop := s.Pop(); pop != 1 {
-			t.Errorf("s.Peek() = %v, want %v", pop, 1)
-		}
-	})
-
-	t.Run("it should delete the second item and set the correct head", func(t *testing.T) {
-		s, _ := newIntStack(3)
-		s.Delete(1)
-
-		if size := s.Size(); size != 2 {
-			t.Errorf("s.Size() = %v, want %v", size, 2)
-		}
-
-		if pop := s.Pop(); pop != 3 {
-			t.Errorf("s.Peek() = %v, want %v", pop, 3)
-		}
-
-		if pop := s.Pop(); pop != 1 {
-			t.Errorf("s.Peek() = %v, want %v", pop, 1)
-		}
-	})
-
-	t.Run("it should delete the third item and set the correct head", func(t *testing.T) {
-		s, _ := newIntStack(3)
-		s.Delete(2)
-
-		if size := s.Size(); size != 2 {
-			t.Errorf("s.Size() = %v, want %v", size, 2)
-		}
-
-		if pop := s.Pop(); pop != 3 {
-			t.Errorf("s.Peek() = %v, want %v", pop, 3)
-		}
-
-		if pop := s.Pop(); pop != 2 {
-			t.Errorf("s.Peek() = %v, want %v", pop, 2)
+		if !s.IsEmpty() && !s2.IsEmpty() {
+			t.Errorf("s.IsEmpty() = %v, s2.IsEmpty() = %v, want %v", s.IsEmpty(), s2.IsEmpty(), true)
 		}
 	})
 }
@@ -204,35 +148,16 @@ func TestStack_Remove(t *testing.T) {
 	})
 }
 
-func TestStack_Max(t *testing.T) {
-	t.Run("it should return 0 if the stack is empty", func(t *testing.T) {
-		s := NewStack[int]()
-
-		if max := s.Max(); max != 0 {
-			t.Errorf("s.Max() = %v, want %v", max, 0)
-		}
-	})
-
-	t.Run("it should return max element", func(t *testing.T) {
-		s := NewStack[int]()
-		s.Push(10)
-		s.Push(0)
-		s.Push(3)
-		s.Push(22)
-		s.Push(5)
-		s.Push(50)
-
-		if max := s.Max(); max != 50 {
-			t.Errorf("s.Max() = %v, want %v", max, 50)
-		}
-	})
-}
-
 func TestStack_Reverse(t *testing.T) {
 	t.Run("it should reverse the stack and return a new copy without modifying the underlying stack", func(t *testing.T) {
 		s, _ := newIntStack(10)
 
 		rev := s.Reverse()
+
+		if s.Size() != 10 && rev.Size() != 10 {
+			t.Errorf("s.Size() = %v, rev.Size() = %v, want %v", s.Size(), rev.Size(), 10)
+		}
+
 		for i := 1; i <= 10; i++ {
 			if pop := rev.Pop(); pop != i {
 				t.Errorf("rev.Pop() = %v, want %v", pop, i)
@@ -243,6 +168,10 @@ func TestStack_Reverse(t *testing.T) {
 			if pop := s.Pop(); pop != i {
 				t.Errorf("s.Pop() = %v, want %v", pop, i)
 			}
+		}
+
+		if !s.IsEmpty() && !rev.IsEmpty() {
+			t.Errorf("s.IsEmpty() = %v, rev.IsEmpty() = %v, want %v", s.IsEmpty(), rev.IsEmpty(), true)
 		}
 	})
 }

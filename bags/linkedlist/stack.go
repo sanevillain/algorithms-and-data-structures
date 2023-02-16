@@ -10,76 +10,129 @@ type Stack[T constraints.Ordered] struct {
 	n     int      // number of items
 }
 
-// Push addNewDoubleNodeem to the stack.
+// Push adds an item on top of the stack.
 func (s *Stack[T]) Push(item T) {
-	s.first = NewNode(item, s.first)
+	// create a new node
+	node := NewNode(item)
+
+	// set the next field of the new node to the first node (previous first)
+	node.SetNext(s.first)
+
+	// set the first node to the new node
+	s.first = node
+
+	// increment the number of items
 	s.n++
 }
 
-// Peek returns the most recently added item. (without removing the node)
-func (s *Stack[T]) Peek() T {
-	if s.first == nil {
-		var item T
-		return item
-	}
-
-	return s.first.item
-}
-
-// Pop removes and returns the most recently added item.
+// Pop removes and returns the most recently added item (top of the stack)
 func (s *Stack[T]) Pop() T {
-	if s.first == nil {
+	if s.IsEmpty() {
 		var item T
+		// return the zero value of the type
 		return item
 	}
 
+	// save the top item
 	item := s.first.item
+
+	// set the first node to the second node
 	s.first = s.first.next
+
+	// decrement the number of items
 	s.n--
 
 	return item
 }
 
-// Copy returns a copy of the stack.
-func (s *Stack[T]) Copy() *Stack[T] {
-	stack := NewStack[T]()
-
-	items := []T{}
-	for node := s.first; node != nil; node = node.next {
-		items = append(items, node.item)
+// Peek returns the most recently added item. (without removing the node)
+func (s *Stack[T]) Peek() T {
+	if s.IsEmpty() {
+		var item T
+		// return the zero value of the type
+		return item
 	}
 
-	for i := len(items) - 1; i >= 0; i-- {
-		stack.Push(items[i])
+	return s.first.Item()
+}
+
+// Copy returns a copy of the stack.
+func (s *Stack[T]) Copy() *Stack[T] {
+	// create a new stack
+	stack := NewStack[T]()
+
+	// we need to keep track of the last node in the copy
+	var last *Node[T]
+
+	// loop through the stack until you reach the end node
+	for node := s.first; node != nil; node = node.next {
+		if stack.IsEmpty() {
+			// push the first item onto the stack if it's empty
+			stack.Push(node.item)
+			// set the last node to the first node
+			last = stack.first
+			continue
+		}
+
+		// create a new node with the item of the current node
+		newNode := NewNode(node.item)
+
+		// set the next field of the last node to the new node
+		last.SetNext(newNode)
+
+		// set the last node to the new node
+		last = newNode
+
+		// increment the number of items
+		stack.n++
 	}
 
 	return stack
 }
 
-// Delete removes the kth element in the list if it exists
-func (s *Stack[T]) Delete(k int) {
-	if s.IsEmpty() || k < 0 || k >= s.n {
+// Remove removes all of the items from the stack that have the input item
+func (s *Stack[T]) Remove(item T) {
+	if s.IsEmpty() {
+		// return early because we can't remove an item from an empty stack
 		return
 	}
 
-	if k == 0 {
-		s.Pop()
-		return
-	}
+	// loop through the stack until we reach the end node
+	for prev, next := s.first, s.first.next; prev != nil && next != nil; prev, next = next, next.next {
+		// if we find a match we need to remove the reference to the node
+		if next.item == item {
+			// set next to the node after next because we want to skip the current node in the next iteration
+			next = next.next
 
-	for i, node := 0, s.first; node != nil; i, node = i+1, node.next {
-		if i == k-1 && node.next != nil {
-			node.next = node.next.next
+			// set the next field of the previous node to the node after next (remove match reference)
+			prev.next = next
+
+			// decrement the number of items
 			s.n--
-			return
+
+			if next == nil {
+				// break if we reach the end of the stack
+				break
+			}
 		}
+	}
+
+	// check if the first item matches because in the loop we're skipping the first node
+	if s.first.item == item {
+		// remove the first item if it matches
+		s.first = s.first.next
+
+		// decrement the number of items
+		s.n--
 	}
 }
 
 // Find returns true if the item exists in the stack
 func (s *Stack[T]) Find(item T) bool {
+	// loop through the stack until we reach the end node
 	for node := s.first; node != nil; node = node.next {
 		if node.item == item {
+			// return true if we find the item
 			return true
 		}
 	}
@@ -87,62 +140,33 @@ func (s *Stack[T]) Find(item T) bool {
 	return false
 }
 
-// Remove removes all of the item from the stack that have the input item
-func (s *Stack[T]) Remove(item T) {
-	if s.IsEmpty() {
-		return
-	}
-
-	for prev, next := s.first, s.first.next; prev != nil && next != nil; {
-		if next.item != item {
-			prev, next = next, next.next
-			continue
-		}
-
-		prev.next = next.next
-		prev, next = prev.next, next.next
-		s.n--
-	}
-
-	if s.first.item == item {
-		s.first = s.first.next
-		s.n--
-	}
-}
-
-// Max returns the maximum value in the stack
-func (s *Stack[T]) Max() T {
-	var max T
-
-	if s.IsEmpty() {
-		return max
-	}
-
-	for node := s.first; node != nil; node = node.next {
-		if node.item > max {
-			max = node.item
-		}
-	}
-
-	return max
-}
-
 // Reverse returns a reversed copy of the stack
 func (s *Stack[T]) Reverse() *Stack[T] {
+	// initialize a new stack
 	stack := NewStack[T]()
 
+	// loop through the stack until we reach the end node
 	for node := s.first; node != nil; node = node.next {
+		// push each item onto the stack
 		stack.Push(node.item)
 	}
 
+	// stack is now in reverse order because we started from the first item
+	// and inserted each following item at the top of the stack
 	return stack
 }
 
 // IsEmpty returns true if the stack is empty.
-func (s *Stack[T]) IsEmpty() bool { return s.first == nil }
+func (s *Stack[T]) IsEmpty() bool {
+	return s.first == nil
+}
 
 // Size returns the number of items in the stack.
-func (s *Stack[T]) Size() int { return s.n }
+func (s *Stack[T]) Size() int {
+	return s.n
+}
 
 // NewStack creates a new stack.
-func NewStack[T constraints.Ordered]() *Stack[T] { return &Stack[T]{} }
+func NewStack[T constraints.Ordered]() *Stack[T] {
+	return &Stack[T]{}
+}
