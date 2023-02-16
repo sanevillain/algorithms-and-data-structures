@@ -9,13 +9,23 @@ type Node[T constraints.Ordered] struct {
 }
 
 // NewNode creates a new node.
-func NewNode[T constraints.Ordered](item T, next *Node[T]) *Node[T] {
-	return &Node[T]{item, next}
+func NewNode[T constraints.Ordered](item T) *Node[T] {
+	return &Node[T]{item, nil}
 }
 
 // Item returns the item of the node.
 func (n *Node[T]) Item() T {
 	return n.item
+}
+
+// SetItem sets the item of the node.
+func (n *Node[T]) SetItem(item T) {
+	n.item = item
+}
+
+// SetNext sets the next field to point to the input node
+func (n *Node[T]) SetNext(next *Node[T]) {
+	n.next = next
 }
 
 // Next returns the next node.
